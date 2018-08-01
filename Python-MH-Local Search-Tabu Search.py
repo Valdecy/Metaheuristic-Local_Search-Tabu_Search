@@ -246,16 +246,19 @@ def tabu_search(Xdata, city_tour, iterations = 150, tabu_tenure = 20):
     tabu_list = [[],[]]
     diversify = False
     no_improvement = 0
-    while (count < iterations):       
+    while (count < iterations):
         stm_and_ltm, city_tour, tabu_list = tabu_update(Xdata, stm_and_ltm, city_tour, best_solution[1], tabu_list = tabu_list, tabu_tenure = tabu_tenure, diversify = diversify)
         if (city_tour[1] < best_solution[1]):
             best_solution = copy.deepcopy(city_tour)
             no_improvement = 0
             diversify = False
         else:
-            no_improvement = no_improvement + 1
-            if (no_improvement > int(iterations/5)):
+            if (no_improvement % int(iterations/5) == 0):
                 diversify = True
+                no_improvement = 0
+            else:
+                diversify = False
+            no_improvement = no_improvement + 1
         count = count + 1
         print("Iteration =", count, "-> Distance =", best_solution[1])
     print("Best Solution =", best_solution)

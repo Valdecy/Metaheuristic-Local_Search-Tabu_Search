@@ -110,8 +110,7 @@ def build_stm_and_ltm(Xdata):
 # Function: Swap
 def local_search_2_swap(Xdata, city_tour, m, n):
     best_route = copy.deepcopy(city_tour)       
-    best_route[0][m], best_route[0][n] = best_route[0][n], best_route[0][m]
-    #best_route[0][m:n+1] = list(reversed(best_route[0][m:n+1]))         
+    best_route[0][m], best_route[0][n] = best_route[0][n], best_route[0][m]        
     best_route[0][-1]  = best_route[0][0]              
     best_route[1] = distance_calc(Xdata, best_route)                     
     city_list = copy.deepcopy(best_route)         

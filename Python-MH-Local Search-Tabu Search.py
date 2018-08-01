@@ -145,8 +145,8 @@ def ltm_diversification (Xdata, stm_and_ltm, city_list):
         stm_and_ltm.iloc[i, 2] = 1
     return stm_and_ltm, city_list
 
-# Function: 4_opt
-def local_search_4_opt(Xdata, city_tour):
+# Function: 4 opt Stochastic
+def local_search_4_opt_stochastic(Xdata, city_tour):
     best_route = copy.deepcopy(city_tour)
     best_route_03 = [[],float("inf")]
     best_route_04 = [[],float("inf")]
@@ -235,7 +235,7 @@ def tabu_update(Xdata, stm_and_ltm, city_list, best_distance, tabu_list, tabu_te
             i = i + 1          
     if (stm_and_ltm.iloc[:, 3].sum() == 2*tabu_tenure): 
         stm_and_ltm, city_list = ltm_diversification(Xdata, stm_and_ltm, city_list) # diversification
-	city_list = local_search_4_opt(Xdata, city_list) # diversification
+	city_list = local_search_4_opt_stochastic(Xdata, city_list) # diversification
     return stm_and_ltm, city_list, tabu_list
 
 # Function: Tabu Search

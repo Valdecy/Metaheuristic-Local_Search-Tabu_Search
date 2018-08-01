@@ -133,19 +133,17 @@ def local_search_2_opt(Xdata, city_tour):
             best_route = copy.deepcopy(seed) 
     return city_list
 
-# Function:
+# Function: Diversification
 def ltm_diversification (Xdata, stm_and_ltm, city_list):
-	stm_and_ltm = stm_and_ltm.sort_values(['Frequency', 'Distance'], ascending = [True, True])
-	lenght = random.sample((range(1, int(Xdata.shape[0]/3))), 1)[0]
-	for i in range(0, lenght):
-		m = int(stm_and_ltm.iloc[i, 0] - 1)
-		n = int(stm_and_ltm.iloc[i, 1] - 1)
-		city_list = local_search_2_swap(Xdata, city_list, m, n)
-	for i in range(0, stm_and_ltm.shape[0]):
-		stm_and_ltm.iloc[i, 2] = 0 
-		stm_and_ltm.iloc[i, 3] = 0
-		stm_and_ltm.iloc[i,-1] = 0 	
-	return stm_and_ltm, city_list
+    stm_and_ltm = stm_and_ltm.sort_values(['Frequency', 'Distance'], ascending = [True, True])
+    lenght = random.sample((range(1, int(Xdata.shape[0]/3))), 1)[0]
+    for i in range(0, lenght):
+        m = int(stm_and_ltm.iloc[i, 0] - 1)
+        n = int(stm_and_ltm.iloc[i, 1] - 1)
+        city_list = local_search_2_swap(Xdata, city_list, m, n)
+        stm_and_ltm.iloc[i, 3] = stm_and_ltm.iloc[i, 3] + 1
+        stm_and_ltm.iloc[i, 2] = 1
+    return stm_and_ltm, city_list
 	
 # Function: Tabu Updatde
 def tabu_update(Xdata, stm_and_ltm, city_list, best_distance, tabu_list, tabu_tenure = 20):

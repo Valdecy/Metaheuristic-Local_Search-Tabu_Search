@@ -176,7 +176,7 @@ def local_search_4_opt_stochastic(Xdata, city_tour):
     return best_route	
 
 # Function: Tabu Update
-def tabu_update(Xdata, stm_and_ltm, city_list, best_distance, tabu_list, tabu_tenure = 20):
+def tabu_update(Xdata, stm_and_ltm, city_list, best_distance, tabu_list, tabu_tenure = 20, diversify = False):
     m_list = []
     n_list = []
     city_list = local_search_2_opt(Xdata, city_list) # itensification
@@ -233,9 +233,9 @@ def tabu_update(Xdata, stm_and_ltm, city_list, best_distance, tabu_list, tabu_te
                 stm_and_ltm.iloc[i, 2] = 0
                 i = stm_and_ltm.shape[0]
             i = i + 1          
-    if (stm_and_ltm.iloc[:, 3].sum() == 2*tabu_tenure): 
+    if (diversify == True):
         stm_and_ltm, city_list = ltm_diversification(Xdata, stm_and_ltm, city_list) # diversification
-	city_list = local_search_4_opt_stochastic(Xdata, city_list) # diversification
+        city_list = local_search_4_opt_stochastic(Xdata, city_list) # diversification
     return stm_and_ltm, city_list, tabu_list
 
 # Function: Tabu Search
@@ -244,10 +244,18 @@ def tabu_search(Xdata, city_tour, iterations = 150, tabu_tenure = 20):
     best_solution = copy.deepcopy(city_tour)
     stm_and_ltm = build_stm_and_ltm(Xdata)
     tabu_list = [[],[]]
-    while (count < iterations):            
-        stm_and_ltm, city_tour, tabu_list = tabu_update(Xdata, stm_and_ltm, city_tour, best_solution[1], tabu_list = tabu_list, tabu_tenure = tabu_tenure)
+    diversify = False
+    no_improvement = 0
+    while (count < iterations):       
+        stm_and_ltm, city_tour, tabu_list = tabu_update(Xdata, stm_and_ltm, city_tour, best_solution[1], tabu_list = tabu_list, tabu_tenure = tabu_tenure, diversify = diversify)
         if (city_tour[1] < best_solution[1]):
             best_solution = copy.deepcopy(city_tour)
+            no_improvement = 0
+            diversify = False
+        else:
+            no_improvement = no_improvement + 1
+            if (no_improvement > int(iterations/5)):
+                diversify = True
         count = count + 1
         print("Iteration =", count, "-> Distance =", best_solution[1])
     print("Best Solution =", best_solution)

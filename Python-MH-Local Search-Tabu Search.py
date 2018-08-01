@@ -144,8 +144,38 @@ def ltm_diversification (Xdata, stm_and_ltm, city_list):
         stm_and_ltm.iloc[i, 3] = stm_and_ltm.iloc[i, 3] + 1
         stm_and_ltm.iloc[i, 2] = 1
     return stm_and_ltm, city_list
-	
-# Function: Tabu Updatde
+
+# Function: 4_opt
+def local_search_4_opt(Xdata, city_tour):
+    best_route = copy.deepcopy(city_tour)
+    best_route_03 = [[],float("inf")]
+    best_route_04 = [[],float("inf")]
+    best_route_11 = [[],float("inf")]
+    best_route_22 = [[],float("inf")]
+    best_route_27 = [[],float("inf")] 
+    i, j, k, L = np.sort(random.sample(list(range(0,Xdata.shape[0])), 4))                                
+    best_route_03[0] = best_route[0][:i+1] + best_route[0][k+1:L+1] + best_route[0][j+1:k+1] + best_route[0][i+1:j+1] + best_route[0][L+1:]
+    best_route_03[1] = distance_calc(Xdata, best_route_03) # ADCB                      
+    best_route_04[0] = best_route[0][:i+1] + list(reversed(best_route[0][i+1:j+1])) + best_route[0][j+1:k+1] + list(reversed(best_route[0][k+1:L+1])) + best_route[0][L+1:]                  
+    best_route_04[1] = distance_calc(Xdata, best_route_04)  # AbCd
+    best_route_11[0] = best_route[0][:i+1] + best_route[0][k+1:L+1] + list(reversed(best_route[0][i+1:j+1])) + list(reversed(best_route[0][j+1:k+1])) + best_route[0][L+1:]
+    best_route_11[1] = distance_calc(Xdata, best_route_11)   # ADbc                                          
+    best_route_22[0] = best_route[0][:i+1] + list(reversed(best_route[0][j+1:k+1])) + list(reversed(best_route[0][k+1:L+1])) + best_route[0][i+1:j+1] + best_route[0][L+1:]
+    best_route_22[1] = distance_calc(Xdata, best_route_22) # AcdB                       
+    best_route_27[0] = best_route[0][:i+1] + list(reversed(best_route[0][k+1:L+1])) + best_route[0][j+1:k+1] + list(reversed(best_route[0][i+1:j+1])) + best_route[0][L+1:]
+    best_route_27[1] = distance_calc(Xdata, best_route_27) # AdCb    
+    best_route = copy.deepcopy(best_route_03)          
+    if(best_route_04[1]  < best_route[1]):
+        best_route = copy.deepcopy(best_route_04)
+    elif(best_route_11[1]  < best_route[1]):
+        best_route = copy.deepcopy(best_route_11)            
+    elif(best_route_22[1]  < best_route[1]):
+        best_route = copy.deepcopy(best_route_22)            
+    elif(best_route_27[1]  < best_route[1]):
+        best_route = copy.deepcopy(best_route_27)          
+    return best_route	
+
+# Function: Tabu Update
 def tabu_update(Xdata, stm_and_ltm, city_list, best_distance, tabu_list, tabu_tenure = 20):
     m_list = []
     n_list = []
@@ -205,6 +235,7 @@ def tabu_update(Xdata, stm_and_ltm, city_list, best_distance, tabu_list, tabu_te
             i = i + 1          
     if (stm_and_ltm.iloc[:, 3].sum() == 2*tabu_tenure): 
         stm_and_ltm, city_list = ltm_diversification(Xdata, stm_and_ltm, city_list) # diversification
+	city_list = local_search_4_opt(Xdata, city_list) # diversification
     return stm_and_ltm, city_list, tabu_list
 
 # Function: Tabu Search

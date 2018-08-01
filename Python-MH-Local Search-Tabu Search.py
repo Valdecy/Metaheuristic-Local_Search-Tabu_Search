@@ -253,7 +253,7 @@ def tabu_search(Xdata, city_tour, iterations = 150, tabu_tenure = 20):
             no_improvement = 0
             diversify = False
         else:
-            if (no_improvement % int(iterations/5) == 0):
+            if (no_improvement > 0 and no_improvement % int(iterations/5) == 0):
                 diversify = True
                 no_improvement = 0
             else:

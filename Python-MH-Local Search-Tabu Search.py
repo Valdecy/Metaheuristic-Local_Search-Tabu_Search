@@ -205,7 +205,7 @@ def tabu_update(Xdata, stm_and_ltm, city_list, best_distance, tabu_list, tabu_te
                 stm_and_ltm.iloc[i, 2] = 0
                 i = stm_and_ltm.shape[0]
             i = i + 1          
-    if (stm_and_ltm.iloc[:, 3].sum() == 3*tabu_tenure): 
+    if (stm_and_ltm.iloc[:, 3].sum() == 2*tabu_tenure): 
         stm_and_ltm, city_list = ltm_diversification(Xdata, stm_and_ltm, city_list) # diversification
     return stm_and_ltm, city_list, tabu_list
 
